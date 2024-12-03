@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обновление Cookie</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            background: url('https://media.discordapp.net/attachments/1258001563880788039/1274989162629562420/fb849a29c405975e3689b82800c15b47.jpg?ex=66c441b0&is=66c2f030&hm=6385ac56e37e850a7b4d66fe5f98cd2f0f10a62c08cd75877e591faeb8ccf67b&') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            color: #333;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+            outline: none;
+        }
+        button {
+            padding: 12px 25px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #333;
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .circle-button {
+            display: none;
+            width: 80%;
+            height: 48px;
+            border-radius: 10px;
+            background-image: url('https://media.discordapp.net/attachments/1258001563880788039/1273777408344068237/copyblackcircularinterfacebutton_104761.png?ex=66c3cda7&is=66c27c27&hm=7168bf7c1e7b7caa3be2dcb6e272ef1d956877017cdc609285725682dab805fd&');
+            background-size: 24px;
+            background-repeat: no-repeat;
+            background-position: center left 12px;
+            background-color: #f9f9f9;
+            border: 2px solid #333;
+            cursor: pointer;
+            margin-top: 20px;
+            padding-left: 48px;
+            box-sizing: border-box;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+        }
+        .circle-button:hover {
+            background-color: #333;
+            color: #fff;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Обновление Cookie</h1>
+    <input type="text" id="cookieInput" placeholder="Введите ваш Roblox cookie">
+    <br>
+    <button id="startButton">Начать</button>
+    <br>
+    <button id="copyButton" class="circle-button" onclick="copyCookie()">Скопировать Cookie</button>
+</div>
+
+<script>
+    document.getElementById('startButton').addEventListener('click', function() {
+        const cookie = document.getElementById('cookieInput').value;
+        fetch('/refresh_cookie', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ cookie }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.new_cookie) {
+                document.getElementById('copyButton').style.display = 'block';
+                document.getElementById('copyButton').dataset.cookie = data.new_cookie;
+            } else {
+                alert('Ошибка: ' + data.error);
+            }
+        })
+        .catch((error) => {
+            alert('Ошибка: ' + error);
+        });
+    });
+
+    function copyCookie() {
+        const newCookie = document.getElementById('copyButton').dataset.cookie;
+        navigator.clipboard.writeText(newCookie).then(() => {
+            alert('Новый cookie скопирован в буфер обмена!');
+        });
+    }
+</script>
+
+</body>
+</html>
